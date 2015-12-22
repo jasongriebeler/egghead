@@ -32,4 +32,3 @@ class githubNotetaker extends React.Component{
 };
 
 
-AppRegistry.registerComponent('githubNotetaker', () => githubNotetaker);
