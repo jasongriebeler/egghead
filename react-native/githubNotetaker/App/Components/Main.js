@@ -1,6 +1,6 @@
 var React = require('react-native');
 var api = require('../Utils/api');
-var Dashboard = require('./Dashboard')
+var Dashboard = require('./Dashboard');
 
 var {
   View,
@@ -10,69 +10,6 @@ var {
   TouchableHighlight,
   ActivityIndicatorIOS
 } = React;
-
-class Main extends React.Component{
-	constructor(props) {
-		super(props);
-		this.state = {
-			username: '',
-			isLoading: false,
-			error: false
-		}
-	}
-
-	handleSubmit(){
-		this.setState({
-      		isLoading: true
-    });
-
-		api.getBio(this.state.username)
-      .then((res) => {
-        if(res.message === 'Not Found'){
-          this.setState({
-            error: 'User not found',
-            isLoading: false
-          })
-        } else {
-          this.props.navigator.push({
-            title: res.name || "select an option",
-            component: Dashboard,
-            passProps: {userInfo: res}
-          });
-          this.setState({
-            isLoading: false,
-            error: false,
-            username: ''
-          })
-        }
-      });
-	}
-
-  handleChange(event){
-		this.setState({
-			username: event.nativeEvent.text
-		})
-  }
-
-  render() {
-  		return(
-  			<View style={styles.mainContainer}>
-  			<Text style={styles.title}>Search for a Github User</Text>
-  			<TextInput
-  				style={styles.searchInput}
-  				value={this.state.username}
-  				onChange={this.handleChange.bind(this)}
-  			/>
-  			<TouchableHighlight
-  				style={styles.button}
-  				onPress={this.handleSubmit.bind(this)}
-  				underlayColor="white">
-  					<Text style={styles.buttonText}> SEARCH </Text>
-  			</TouchableHighlight>
-  			</View>
-		  )
-  	}
-};
 
 var styles = StyleSheet.create({
   mainContainer: {
@@ -117,5 +54,72 @@ var styles = StyleSheet.create({
     justifyContent: 'center'
   },
 });
+
+class Main extends React.Component{
+  constructor(props){
+    super(props);
+    this.state = {
+      username: '',
+      isLoading: false,
+      error: false
+    }
+  }
+  handleChange(event){
+    this.setState({
+      username: event.nativeEvent.text
+    })
+  }
+  handleSubmit(){
+    // update our indicatorIOS spinner
+    this.setState({
+      isLoading: true
+    });
+    api.getBio(this.state.username)
+      .then((res) => {
+        if(res.message === 'Not Found'){
+          this.setState({
+            error: 'User not found',
+            isLoading: false
+          })
+        } else {
+          this.props.navigator.push({
+            title: res.name || "Select an Option",
+            component: Dashboard,
+            passProps: {userInfo: res}
+          });
+          this.setState({
+            isLoading: false,
+            error: false,
+            username: ''
+          })
+        }
+      });
+  }
+  render() {
+    var showErr = (
+      this.state.error ? <Text> {this.state.error} </Text> : <View></View>
+    );
+    return(
+      <View style={styles.mainContainer}>
+      <Text style={styles.title}> Search for a Github User </Text>
+      <TextInput
+        style={styles.searchInput}
+        value={this.state.username}
+        onChange={this.handleChange.bind(this)} />
+        <TouchableHighlight
+          style={styles.button}
+          onPress={this.handleSubmit.bind(this)}
+          underlayColor="white">
+          <Text style={styles.buttonText}> SEARCH </Text>
+        </TouchableHighlight>
+        <ActivityIndicatorIOS
+          animating={this.state.isLoading}
+          color="#111"
+          size="Large"></ActivityIndicatorIOS>
+        {showErr}
+      </View>
+      )
+  }
+};
 
 module.exports = Main;
