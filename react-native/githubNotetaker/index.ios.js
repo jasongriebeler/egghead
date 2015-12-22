@@ -1,4 +1,3 @@
-
 var React = require('react-native');
 var Main = require('./App/Components/Main');
 
@@ -25,10 +24,11 @@ class githubNotetaker extends React.Component{
       style={styles.container}
         initialRoute={{
           title: 'Github NoteTaker',
-          component: Main 
+          component: Main
         }} />
     );
   }
 };
 
 
+AppRegistry.registerComponent('githubNotetaker', () => githubNotetaker);
